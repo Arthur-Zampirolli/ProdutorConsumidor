@@ -19,7 +19,8 @@ def genMatrixesFile(fileName, sepSymbol):
                     separator = sepSymbol
                 out+=str(random.random()*10)+separator
             out+='\n'
-    out+='\n'
+        if(a < 1):
+            out+='\n'
     file.write(out)
     file.close()
 def main():
