@@ -173,7 +173,7 @@ int main()
     pthread_exit(NULL);
 }
 
-void *matrixMultiiply(double **a, double **b, double **c)
+void *matrixMultiply(double **a, double **b, double **c)
 {
     for (int i = 0; i < 10; i++)
     {
