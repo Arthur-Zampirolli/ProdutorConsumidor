@@ -6,6 +6,7 @@ separators = {
     "comma": ",",
     "pipe": "|",
     "dash": "-",
+    "whitespace": " "
 }
 
 def genMatrixesFile(fileName, sepSymbol):
@@ -35,6 +36,6 @@ def main():
     print(split)
     for i in range(TAMANHO):
         if(len(split[i]) > 0):
-            genMatrixesFile(split[i], separators["comma"])
+            genMatrixesFile(split[i], separators["whitespace"])
     return 0
 main()

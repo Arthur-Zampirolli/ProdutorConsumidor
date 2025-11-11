@@ -1,5 +1,5 @@
 # Define a versão mínima do CMake necessária para configurar o projeto
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.11)
 
 project(ProdutorConsumidor C) # 'C' indica que este é um projeto C
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include </usr/include/semaphore.h>
+#include <string.h>
 
 #define BUFF_SIZE 5 /* total number of slots */
 #define NP 3        /* total number of producers */
@@ -9,6 +10,8 @@
 #define NC 1        /* total number of consumers */
 #define NITERS 4    /* number of items produced/consumed */
 
+
+#define STRING_MAX 1000 // tamanho maximo do buffer de string pra ler a linha da matrix
 #define DIMENSION 10 //dimensao da matrix
 #define NAME_MAX 100 // tamanho maximo do nome do arquivo
 //path de arquivos de entrada
@@ -136,42 +139,106 @@ void *Consumer(void *arg)
     return NULL;
 }
 
-int main()
-{
-    pthread_t idP, idC, idCP;
-    int index;
-    int sP[NP], sC[NC], sCP[NCP];
+// int main()
+// {
+//     pthread_t idP, idC, idCP;
+//     int index;
+//     int sP[NP], sC[NC], sCP[NCP];
 
-    for (index = 0; index < 2; index++)
-    {
-        sem_init(&shared[index].full, 0, 0);
-        sem_init(&shared[index].empty, 0, BUFF_SIZE);
-        sem_init(&shared[index].mutex, 0, 1);
-    }
+//     for (index = 0; index < 2; index++)
+//     {
+//         sem_init(&shared[index].full, 0, 0);
+//         sem_init(&shared[index].empty, 0, BUFF_SIZE);
+//         sem_init(&shared[index].mutex, 0, 1);
+//     }
 
-    for (index = 0; index < NP; index++)
-    {
-        sP[index] = index;
-        /* Create a new producer */
-        pthread_create(&idP, NULL, Producer, &sP[index]);
-    }
+//     for (index = 0; index < NP; index++)
+//     {
+//         sP[index] = index;
+//         /* Create a new producer */
+//         pthread_create(&idP, NULL, Producer, &sP[index]);
+//     }
 
-    for (index = 0; index < NCP; index++)
-    {
-        sCP[index] = index;
-        /* Create a new producer */
-        pthread_create(&idCP, NULL, ConsumerProducer, &sCP[index]);
-    }
+//     for (index = 0; index < NCP; index++)
+//     {
+//         sCP[index] = index;
+//         /* Create a new producer */
+//         pthread_create(&idCP, NULL, ConsumerProducer, &sCP[index]);
+//     }
 
-    for (index = 0; index < NC; index++)
-    {
-        sC[index] = index;
-        /* Create a new consumer */
-        pthread_create(&idC, NULL, Consumer, &sC[index]);
-    }
+//     for (index = 0; index < NC; index++)
+//     {
+//         sC[index] = index;
+//         /* Create a new consumer */
+//         pthread_create(&idC, NULL, Consumer, &sC[index]);
+//     }
 
-    pthread_exit(NULL);
+//     pthread_exit(NULL);
+// }
+
+void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]);
+int main(){
+    double A[DIMENSION][DIMENSION];
+    double B[DIMENSION][DIMENSION];
+    
+    loadMatrices("./src/input/set0.in", A, B);
+    return 0;
 }
+
+void printmatrix(double m[DIMENSION][DIMENSION]){
+    for(int i = 0; i < DIMENSION; i++){
+        for(int j = 0; j < DIMENSION; j++){
+            printf("%lf ", m[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void linecpy(double a[DIMENSION], double b[DIMENSION]){
+    for(int i = 0; i < DIMENSION; i++){
+        a[i] = b[i];
+    }
+    return;
+}
+
+void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]){
+    FILE *input = fopen(filename, "r");
+    if(!input){
+        perror("Error opening file");
+        return;
+    }
+    char * buffer = malloc(sizeof(char)*STRING_MAX);
+    double line[DIMENSION];
+    int i = 0;
+    int j = 0;
+    int second = 0;
+    while(fgets(buffer, STRING_MAX, input) != NULL){
+        //printf("%s\n", buffer);
+        if(strlen(buffer) <= 1){
+
+            second = 1;
+        }
+        if(strlen(buffer)>1){
+            sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &line[0], &line[1], &line[2], &line[3], &line[4], &line[5], &line[6], &line[7], &line[8], &line[9]);
+            if(second == 0){
+                linecpy(A[i],line);  
+                i++;
+            }
+            else{
+                linecpy(B[j], line);
+                j++;
+            }
+        }
+    }
+    printf("--------------- matrix A ----------------\n");
+    printmatrix(A);
+    printf("--------------- matrix B ----------------\n");
+    printmatrix(B);
+    fclose(input);
+
+    return;
+}
+
 
 void *matrixMultiply(double **a, double **b, double **c)
 {
@@ -191,4 +258,5 @@ void *matrixMultiply(double **a, double **b, double **c)
             }
         }
     }
+    return 0;
 }
