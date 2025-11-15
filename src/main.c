@@ -3,39 +3,11 @@
 #include <stdlib.h>
 #include </usr/include/semaphore.h>
 #include <string.h>
+#include "constants.h"
+#include "semaphore.h"
+#include "io.h"
 
-#define BUFF_SIZE 5 /* total number of slots */
-#define NP 3        /* total number of producers */
-#define NCP 3       /* total number of consumers/producers */
-#define NC 1        /* total number of consumers */
-#define NITERS 4    /* number of items produced/consumed */
-
-
-#define STRING_MAX 1000 // tamanho maximo do buffer de string pra ler a linha da matrix
-#define DIMENSION 10 //dimensao da matrix
-#define NAME_MAX 100 // tamanho maximo do nome do arquivo
-//path de arquivos de entrada
-char inputPath[] = "./input/";
-typedef struct
-{
-    int buf[BUFF_SIZE]; /* shared var */
-    int in;             /* buf[in%BUFF_SIZE] is the first empty slot */
-    int out;            /* buf[out%BUFF_SIZE] is the first full slot */
-    //propriedades que o professor pediu
-    char fileA[NAME_MAX];
-    char fileB[NAME_MAX];
-    double A[DIMENSION][DIMENSION];
-    double B[DIMENSION][DIMENSION];
-    double C[DIMENSION][DIMENSION];
-    double V[10];
-    double E;
-    // fim propriedades
-    sem_t full;  /* keep track of the number of full spots */
-    sem_t empty; /* keep track of the number of empty spots */
-    sem_t mutex; /* enforce mutual exclusion to shared data */
-} sbuf_t;
-
-sbuf_t shared[2];
+S shared[BUFF_SIZE]; //5 posiçoes como pedido
 
 void *Producer(void *arg)
 {
@@ -176,26 +148,31 @@ void *Consumer(void *arg)
 //     pthread_exit(NULL);
 // }
 
-void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]);
 int main(){
     //int size = 50;
     double A[DIMENSION][DIMENSION];
     double B[DIMENSION][DIMENSION];
     char fileInput[STRING_MAX+6];
     
-    FILE *fp = fopen("./src/input/entrada.in", "r");
+    FILE *fp = fopen("./input/entrada.in", "r");
     if(!fp){
         perror("File error:\n");
         return 1;
     }
     char buffer[STRING_MAX];
     while(fgets(buffer, STRING_MAX, fp) != NULL){
-        if(strlen(buffer) <= 1){
+        int size = strlen(buffer);
+        buffer[size - 1] = '\0';
+        if(size <= 1){
             //EOF
             continue;
         }
-        if(strlen(buffer) > 1){
-            sprintf(fileInput, "./src/%s", buffer);
+        if(size > 1){
+            
+            sprintf(fileInput, "%s", buffer);
+            
+            //fileInput[size - 1] = '\0'
+            
             printf("Loading file: %s\n", fileInput);
             loadMatrices(fileInput, A, B);
         }
@@ -205,78 +182,4 @@ int main(){
     return 0;
 }
 
-void printmatrix(double m[DIMENSION][DIMENSION]){
-    for(int i = 0; i < DIMENSION; i++){
-        for(int j = 0; j < DIMENSION; j++){
-            printf("%lf ", m[i][j]);
-        }
-        printf("\n");
-    }
-}
 
-void linecpy(double a[DIMENSION], double b[DIMENSION]){
-    for(int i = 0; i < DIMENSION; i++){
-        a[i] = b[i];
-    }
-    return;
-}
-
-void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]){
-    FILE *input = fopen(filename, "r");
-    if(!input){
-        perror("Error opening file");
-        return;
-    }
-    char * buffer = malloc(sizeof(char)*STRING_MAX);
-    double line[DIMENSION];
-    int i = 0;
-    int j = 0;
-    int second = 0;
-    while(fgets(buffer, STRING_MAX, input) != NULL){
-        //printf("%s\n", buffer);
-        if(strlen(buffer) <= 1){
-
-            second = 1;
-        }
-        if(strlen(buffer)>1){
-            sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &line[0], &line[1], &line[2], &line[3], &line[4], &line[5], &line[6], &line[7], &line[8], &line[9]);
-            if(second == 0){
-                linecpy(A[i],line);  
-                i++;
-            }
-            else{
-                linecpy(B[j], line);
-                j++;
-            }
-        }
-    }
-    printf("--------------- matrix A ----------------\n");
-    printmatrix(A);
-    printf("--------------- matrix B ----------------\n");
-    printmatrix(B);
-    fclose(input);
-
-    return;
-}
-
-
-void *matrixMultiply(double **a, double **b, double **c)
-{
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            c[i][j] = 0;
-            for (int k = 0; k < 10; k++)
-            {
-                c[i][j] += a[i][k] * b[k][j];
-                /*Exemplo: c[0][0] = a[0][0]*b[0][0]+
-                a[0][1]*b[1][0]+
-                a[0][2]*b[2][0];
-
-                */
-            }
-        }
-    }
-    return 0;
-}

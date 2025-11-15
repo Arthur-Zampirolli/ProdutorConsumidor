@@ -1,3 +1,4 @@
+#include "matrix.h"
 void *matrixMultiply(double **a, double **b, double **c)
 {
     for (int i = 0; i < 10; i++)
@@ -16,4 +17,5 @@ void *matrixMultiply(double **a, double **b, double **c)
             }
         }
     }
+    return 0;
 }

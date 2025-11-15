@@ -1,9 +1,9 @@
 rm -rf build
-rm main
+rm ./src/main
 mkdir -p build
 cd build 
 cmake .. -GNinja && ninja
 chmod +x main
 ls
-mv main ..; cd ..
+mv main ../src; cd ../src
 ./main
