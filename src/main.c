@@ -178,10 +178,30 @@ void *Consumer(void *arg)
 
 void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]);
 int main(){
+    //int size = 50;
     double A[DIMENSION][DIMENSION];
     double B[DIMENSION][DIMENSION];
+    char fileInput[STRING_MAX+6];
     
-    loadMatrices("./src/input/set0.in", A, B);
+    FILE *fp = fopen("./src/input/entrada.in", "r");
+    if(!fp){
+        perror("File error:\n");
+        return 1;
+    }
+    char buffer[STRING_MAX];
+    while(fgets(buffer, STRING_MAX, fp) != NULL){
+        if(strlen(buffer) <= 1){
+            //EOF
+            continue;
+        }
+        if(strlen(buffer) > 1){
+            sprintf(fileInput, "./src/%s", buffer);
+            printf("Loading file: %s\n", fileInput);
+            loadMatrices(fileInput, A, B);
+        }
+
+    }
+    fclose(fp);
     return 0;
 }
 
