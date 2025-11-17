@@ -182,11 +182,13 @@ int main(){
             printmatrix(A);
             printf("----------MATRIX_B------------\n");
             printmatrix(B);
-            printf("----------RESULT------------\n");
+            printf("-----------RESULT-------------\n");
             printmatrix(C);
+            
         }
 
     }
+    saveMatrix("./output/result.out", C);
     fclose(fp);
     return 0;
 }

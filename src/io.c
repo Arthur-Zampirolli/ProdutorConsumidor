@@ -51,4 +51,30 @@ void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMEN
     fclose(input);
     return;
 }
-
+// para resolver o problema, pediu-se dimensão 10, então vou fazer hardcoded pra 10
+int saveMatrix(char *filename, double A[DIMENSION][DIMENSION]){
+    FILE * fp = fopen(filename, "w");
+    char result[STRING_MAX];
+    if(!fp){
+        perror("Unable to save the file");
+        return 1;
+    }
+    for(int i = 0; i < DIMENSION; i++){
+        char line[STRING_MAX];
+        line[0] = '\0';
+        for(int j = 0; j < DIMENSION; j++){
+            char temp[50];
+            sprintf(temp, "%lf", A[i][j]);
+            if(j < DIMENSION - 1){
+                strcat(temp, " ");
+            }
+            strcat(line, temp);
+        }
+        strcat(line, "\n");
+        strcat(result, line);
+    }
+    int size = strlen(result);
+    fwrite(result, sizeof(char), size-1, fp);
+    fclose(fp);
+    return 0;
+}
