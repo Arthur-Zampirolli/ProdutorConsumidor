@@ -21,4 +21,6 @@ endif()
 add_executable(
     main      
     src/main.c
+    src/io.c
+    src/matrix.c
 )

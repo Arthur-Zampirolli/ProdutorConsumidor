@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "semaphore.h"
 #include "io.h"
+#include "matrix.h"
 
 S shared[BUFF_SIZE]; //5 posiçoes como pedido
 
@@ -152,6 +153,7 @@ int main(){
     //int size = 50;
     double A[DIMENSION][DIMENSION];
     double B[DIMENSION][DIMENSION];
+    double C[DIMENSION][DIMENSION];
     char fileInput[STRING_MAX+6];
     
     FILE *fp = fopen("./input/entrada.in", "r");
@@ -175,6 +177,13 @@ int main(){
             
             printf("Loading file: %s\n", fileInput);
             loadMatrices(fileInput, A, B);
+            matrixMultiply(A, B, C);
+            printf("----------MATRIX_A------------\n");
+            printmatrix(A);
+            printf("----------MATRIX_B------------\n");
+            printmatrix(B);
+            printf("----------RESULT------------\n");
+            printmatrix(C);
         }
 
     }

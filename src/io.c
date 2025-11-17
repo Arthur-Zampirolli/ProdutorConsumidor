@@ -1,4 +1,9 @@
-#nclude "io.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "constants.h"
+#include "io.h"
+
 void printmatrix(double m[DIMENSION][DIMENSION]){
     for(int i = 0; i < DIMENSION; i++){
         for(int j = 0; j < DIMENSION; j++){
@@ -17,8 +22,6 @@ void linecpy(double a[DIMENSION], double b[DIMENSION]){
 
 void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMENSION][DIMENSION]){
     FILE *input = fopen(filename, "r");
-    printf("FILEPUTA CARALHO %s", filename);
-    //system("ls input");
     if(!input){
         perror("Error opening file");
         return;
@@ -29,7 +32,6 @@ void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMEN
     int j = 0;
     int second = 0;
     while(fgets(buffer, STRING_MAX, input) != NULL){
-        //printf("%s\n", buffer);
         if(strlen(buffer) <= 1){
 
             second = 1;
@@ -46,12 +48,7 @@ void loadMatrices(char *filename, double A[DIMENSION][DIMENSION], double B[DIMEN
             }
         }
     }
-    printf("--------------- matrix A ----------------\n");
-    printmatrix(A);
-    printf("--------------- matrix B ----------------\n");
-    printmatrix(B);
     fclose(input);
-
     return;
 }
 
