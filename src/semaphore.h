@@ -17,6 +17,7 @@ typedef struct
     sem_t full;  /* keep track of the number of full spots */
     sem_t empty; /* keep track of the number of empty spots */
     sem_t mutex; /* enforce mutual exclusion to shared data */
+    int kill;
 } S;
 
 #endif

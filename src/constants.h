@@ -3,7 +3,7 @@
 #define NCP 3       /* total number of consumers/producers */
 #define NC 1        /* total number of consumers */
 #define NITERS 4    /* number of items produced/consumed */
-
+#define KILL -1
 
 #define STRING_MAX 1000 // tamanho maximo do buffer de string pra ler a linha da matrix
 #define DIMENSION 10 //dimensao da matrix

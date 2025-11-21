@@ -2,13 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include </usr/include/semaphore.h>
-#include <string.h>
-#include "constants.h"
-#include "semaphore.h"
-#include "io.h"
-#include "matrix.h"
 
-S shared[BUFF_SIZE]; //5 posiçoes como pedido
+#define BUFF_SIZE 10 /* total number of slots */
+#define NP 1        /* total number of producers */
+#define NCP 3       /* total number of consumers/producers */
+#define NC 1        /* total number of consumers */
+#define NITERS 50    /* number of items produced/consumed */
+#define KILL -1
+typedef struct
+{
+    int buf[BUFF_SIZE]; /* shared var */
+    int in;             /* buf[in%BUFF_SIZE] is the first empty slot */
+    int out;            /* buf[out%BUFF_SIZE] is the first full slot */
+    sem_t full;         /* keep track of the number of full spots */
+    sem_t empty;        /* keep track of the number of empty spots */
+    sem_t mutex;        /* enforce mutual exclusion to shared data */
+} sbuf_t;
+
+sbuf_t shared[2];
 
 
 void *Producer(void *arg)
@@ -54,47 +65,61 @@ void *Producer(void *arg)
     return NULL;
 }
 
-
 void *ConsumerProducer(void *arg)
 {
     int i, item, index;
 
     index = *((int *)arg);
 
-    for (i = 0; i < NITERS; i++)
+    while(1)
     {
-
-        /* Prepare to read item from buf */
-
-        /* If there are no filled slots, wait */
         sem_wait(&shared[0].full);
-        /* If another thread uses the buffer, wait */
         sem_wait(&shared[0].mutex);
+
         item = shared[0].buf[shared[0].out];
         shared[0].out = (shared[0].out + 1) % BUFF_SIZE;
+        
+        if (item == KILL)
+        {
+            printf("killing CP_%d...\n", index);
+            printf("Sending kill signal for consumers...\n");
+
+
+            sem_post(&shared[0].mutex);
+            sem_post(&shared[0].full);
+            for (int j = 0; j < NC; j++)
+            {
+                sem_wait(&shared[1].empty);
+                sem_wait(&shared[1].mutex);
+
+
+                shared[1].buf[shared[1].in] = KILL;
+                shared[1].in = (shared[1].in + 1) % BUFF_SIZE;
+                fflush(stdout);
+
+                sem_post(&shared[1].mutex);
+                sem_post(&shared[1].full);
+            }
+
+            break;
+        }
         printf("[CP1_%d] Consuming %d ...\n", index, item);
         fflush(stdout);
-        /* Release the buffer */
+
         sem_post(&shared[0].mutex);
-        /* Increment the number of empty slots */
         sem_post(&shared[0].empty);
 
-        // Change consumed item
         item += 500;
 
-        /* Prepare to write item to buf */
-
-        /* If there are no empty slots, wait */
         sem_wait(&shared[1].empty);
-        /* If another thread uses the buffer, wait */
         sem_wait(&shared[1].mutex);
+
         shared[1].buf[shared[1].in] = item;
         shared[1].in = (shared[1].in + 1) % BUFF_SIZE;
         printf("[CP1_%d] Producing %d ...\n", index, item);
         fflush(stdout);
-        /* Release the buffer */
+
         sem_post(&shared[1].mutex);
-        /* Increment the number of full slots */
         sem_post(&shared[1].full);
     }
     return NULL;
@@ -106,22 +131,26 @@ void *Consumer(void *arg)
 
     index = *((int *)arg);
 
-    for (i = 0; i < NITERS; i++)
+    while(1)
     {
 
-        /* Prepare to read item from buf */
-
-        /* If there are no filled slots, wait */
         sem_wait(&shared[1].full);
-        /* If another thread uses the buffer, wait */
         sem_wait(&shared[1].mutex);
+
         item = shared[1].buf[shared[1].out];
         shared[1].out = (shared[1].out + 1) % BUFF_SIZE;
+
+        if (item == KILL)
+        {
+            printf("Killing consumer %d\n", index);
+            sem_post(&shared[1].mutex);
+            sem_post(&shared[1].empty);
+            break;
+        }
         printf("[C_%d] Consuming %d ...\n", index, item);
         fflush(stdout);
-        /* Release the buffer */
+
         sem_post(&shared[1].mutex);
-        /* Increment the number of empty slots */
         sem_post(&shared[1].empty);
     }
     return NULL;
@@ -129,83 +158,63 @@ void *Consumer(void *arg)
 
 int main()
 {
-    pthread_t idP, idC, idCP;
+    pthread_t idP[NP], idC[NC], idCP[NCP];
     int index;
     int sP[NP], sC[NC], sCP[NCP];
+
 
     for (index = 0; index < 2; index++)
     {
         sem_init(&shared[index].full, 0, 0);
         sem_init(&shared[index].empty, 0, BUFF_SIZE);
         sem_init(&shared[index].mutex, 0, 1);
+
+                // Inicializa in/out
+        shared[index].in = 0;
+        shared[index].out = 0;
     }
 
     for (index = 0; index < NP; index++)
     {
         sP[index] = index;
         /* Create a new producer */
-        pthread_create(&idP, NULL, Producer, &sP[index]);
+        pthread_create(&idP[index], NULL, Producer, &sP[index]);
     }
 
     for (index = 0; index < NCP; index++)
     {
         sCP[index] = index;
-        /* Create a new consumer producer */
-        pthread_create(&idCP, NULL, ConsumerProducer, &sCP[index]);
+        /* Create a new producer */
+        pthread_create(&idCP[index], NULL, ConsumerProducer, &sCP[index]);
     }
 
     for (index = 0; index < NC; index++)
     {
         sC[index] = index;
         /* Create a new consumer */
-        pthread_create(&idC, NULL, Consumer, &sC[index]);
+        pthread_create(&idC[index], NULL, Consumer, &sC[index]);
+    }
+    for (index = 0; index < NCP; index++)
+    {
+        pthread_join(idP[index], NULL);
+    }
+    for (index = 0; index < NCP; index++)
+    {
+        pthread_join(idCP[index], NULL);
+    }
+    for (index = 0; index < NC; index++)
+    {
+        pthread_join(idC[index], NULL);
+    }
+    
+
+    for (index = 0; index < 2; index++)
+    {
+        sem_destroy(&shared[index].full);
+        sem_destroy(&shared[index].empty);
+        sem_destroy(&shared[index].mutex);
     }
 
-    pthread_exit(NULL);
+    printf("Programa encerrado com sucesso.\n");
+    return 0;
 }
-
-// int main(){
-//     //int size = 50;
-//     double A[DIMENSION][DIMENSION];
-//     double B[DIMENSION][DIMENSION];
-//     double C[DIMENSION][DIMENSION];
-//     char fileInput[STRING_MAX+6];
-    
-//     FILE *fp = fopen("./input/entrada.in", "r");
-//     if(!fp){
-//         perror("File error:\n");
-//         return 1;
-//     }
-//     char buffer[STRING_MAX];
-//     while(fgets(buffer, STRING_MAX, fp) != NULL){
-//         int size = strlen(buffer);
-//         buffer[size - 1] = '\0';
-//         if(size <= 1){
-//             //EOF
-//             continue;
-//         }
-//         if(size > 1){
-            
-//             sprintf(fileInput, "%s", buffer);
-            
-//             //fileInput[size - 1] = '\0'
-            
-//             printf("Loading file: %s\n", fileInput);
-//             loadMatrices(fileInput, A, B);
-//             matrixMultiply(A, B, C);
-//             printf("----------MATRIX_A------------\n");
-//             printmatrix(A);
-//             printf("----------MATRIX_B------------\n");
-//             printmatrix(B);
-//             printf("-----------RESULT-------------\n");
-//             printmatrix(C);
-            
-//         }
-
-//     }
-//     saveMatrix("./output/result.out", C);
-//     fclose(fp);
-//     return 0;
-// }
-
-
