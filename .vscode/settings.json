@@ -4,6 +4,14 @@
         "semaphore.h": "c",
         "string.h": "c",
         "stdlib.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "matrix.h": "c",
+        "producer.h": "c",
+        "consumer.h": "c",
+        "threads.h": "c",
+        "consumer_producer.h": "c",
+        "io.h": "c",
+        "data.h": "c",
+        "data_buffer.h": "c"
     }
 }

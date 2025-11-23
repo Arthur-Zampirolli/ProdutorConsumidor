@@ -21,6 +21,12 @@ endif()
 add_executable(
     main      
     src/main.c
-    src/io.c
-    src/matrix.c
+    src/lib/data.c
+    src/lib/io.c
+    src/lib/matrix.c
+    src/lib/producer/producer.c
+    src/lib/consumer/consumer.c
+    src/lib/consumer_producer/consumer_producer.c
+    src/lib/data_buffer.c
+    
 )

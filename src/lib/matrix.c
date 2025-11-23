@@ -1,6 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "constants.h"
+
 #include "matrix.h"
 void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSION], double c[DIMENSION][DIMENSION])
 {
@@ -20,4 +18,14 @@ void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSI
         }
     }
     return NULL;
+}
+void initMatrix(double matrix[DIMENSION][DIMENSION])
+{
+    for (int i = 0; i < DIMENSION; i++)
+    {
+        for (int j = 0; j < DIMENSION; j++)
+        {
+            matrix[i][j] = 0.0;
+        }
+    }
 }
