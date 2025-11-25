@@ -4,57 +4,152 @@
 #include </usr/include/semaphore.h>
 #include <string.h>
 #include "lib/constants.h"
-//#include "lib/semaphore.h"
+// #include "lib/semaphore.h"
 #include "lib/io.h"
 #include "lib/matrix.h"
 #include "lib/threads.h"
 #include "lib/data_buffer.h"
+#include "constants.h"
 
 S shared[5];
 
-
 int main(){
-    //int size = 50;
-    double A[DIMENSION][DIMENSION];
-    double B[DIMENSION][DIMENSION];
-    double C[DIMENSION][DIMENSION];
-    char fileInput[STRING_MAX+6];//gambiarra do bem
-    
-    FILE *fp = fopen("./input/entrada.in", "r");
-    if(!fp){
-        perror("File error:\n");
-        return 1;
-    }
-    char buffer[STRING_MAX];
-    while(fgets(buffer, STRING_MAX, fp) != NULL){
-        int size = strlen(buffer);
-        buffer[size - 1] = '\0';
-        if(size <= 1){
-            //EOF
-            continue;
-        }
-        if(size > 1){
-            
-            sprintf(fileInput, "%s", buffer);
-            
-            //fileInput[size - 1] = '\0'
-            
-            printf("Loading file: %s\n", fileInput);
-            loadMatrices(fileInput, A, B);
-            matrixMultiply(A, B, C);
-            printf("----------MATRIX_A------------\n");
-            printmatrix(A);
-            printf("----------MATRIX_B------------\n");
-            printmatrix(B);
-            printf("-----------RESULT-------------\n");
-            printmatrix(C);
-            
-        }
+    pthread_t idP[NP], idC[NC], idCP1[NCP1], idCP2[NCP2], idCP3[NCP3];
+    int index;
+    int sP[NP], sC[NC], sCP1[NCP1], sCP2[NCP2], sCP3[NCP3];
 
+    for (index = 0; index < 2; index++)
+    {
+        sem_init(&shared[index].full, 0, 0);
+        sem_init(&shared[index].empty, 0, BUFF_SIZE);
+        sem_init(&shared[index].mutex, 0, 1);
+
+        // Inicializa in/out
+        shared[index].in = 0;
+        shared[index].out = 0;
     }
-    saveMatrix("./output/result.out", C);
-    fclose(fp);
+
+    for (index = 0; index < NP; index++)
+    {
+        sP[index] = index;
+        /* Create a new producer */
+        pthread_create(&idP[index], NULL, Producer, &sP[index]);
+    }
+
+
+
+    //CONSUMER PRODUCER THREADS
+    for (index = 0; index < NCP1; index++)
+    {
+        sCP1[index] = index;
+        /* Create a new producer */
+        pthread_create(&idCP1[index], NULL, ConsumerProducer1, &sCP1[index]);
+    }
+
+    for (index = 0; index < NCP2; index++)
+    {
+        sCP2[index] = index;
+        /* Create a new producer */
+        pthread_create(&idCP2[index], NULL, ConsumerProducer2, &sCP2[index]);
+    }
+
+    for (index = 0; index < NCP3; index++)
+    {
+        sCP3[index] = index;
+        /* Create a new producer */
+        pthread_create(&idCP3[index], NULL, ConsumerProducer3, &sCP3[index]);
+    }
+
+
+
+    //CONSUMER THREADS
+    for (index = 0; index < NC; index++)
+    {
+        sC[index] = index;
+        /* Create a new consumer */
+        pthread_create(&idC[index], NULL, Consumer, &sC[index]);
+    }
+    //JOIN THREADS
+    for (index = 0; index < NP; index++)
+    {
+        pthread_join(idP[index], NULL);
+    }
+
+
+    for (index = 0; index < NCP1; index++)
+    {
+        pthread_join(idCP1[index], NULL);
+    }
+    for (index = 0; index < NCP2; index++)
+    {
+        pthread_join(idCP2[index], NULL);
+    }
+    for (index = 0; index < NCP3; index++)
+    {
+        pthread_join(idCP3[index], NULL);
+    }
+
+
+
+    for (index = 0; index < NC; index++)
+    {
+        pthread_join(idC[index], NULL);
+    }
+
+    for (index = 0; index < 2; index++)
+    {
+        sem_destroy(&shared[index].full);
+        sem_destroy(&shared[index].empty);
+        sem_destroy(&shared[index].mutex);
+    }
+
+    printf("Programa encerrado com sucesso.\n");
     return 0;
 }
 
+// int main()
+// {
+//     // int size = 50;
+//     double A[DIMENSION][DIMENSION];
+//     double B[DIMENSION][DIMENSION];
+//     double C[DIMENSION][DIMENSION];
+//     char fileInput[STRING_MAX + 6]; // gambiarra do bem
 
+//     FILE *fp = fopen("./input/entrada.in", "r");
+//     if (!fp)
+//     {
+//         perror("File error:\n");
+//         return 1;
+//     }
+//     char buffer[STRING_MAX];
+//     while (fgets(buffer, STRING_MAX, fp) != NULL)
+//     {
+//         int size = strlen(buffer);
+//         buffer[size - 1] = '\0';
+//         if (size <= 1)
+//         {
+//             // EOF
+//             continue;
+//         }
+//         if (size > 1)
+//         {
+
+//             sprintf(fileInput, "%s", buffer);
+
+//             // fileInput[size - 1] = '\0'
+
+//             printf("Loading file: %s\n", fileInput);
+//             loadMatrices(fileInput, A, B);
+//             matrixMultiply(A, B, C);
+//             printf("----------MATRIX_A------------\n");
+//             printmatrix(A);
+//             printf("----------MATRIX_B------------\n");
+//             printmatrix(B);
+//             printf("-----------RESULT-------------\n");
+//             printmatrix(C);
+//         }
+//     }
+//     saveMatrix("./output/result.out", C);
+//     fclose(fp);
+//     return 0;
+// }

@@ -8,5 +8,7 @@
 #include "../constants.h"
 
 
-void *ConsumerProducer(void *arg);
+void *ConsumerProducer1(void *arg);
+void *ConsumerProducer2(void *arg);
+void *ConsumerProducer3(void *arg);
 #endif
