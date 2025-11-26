@@ -42,7 +42,7 @@ void *Producer(void *arg)
         sem_post(&shared[0].full);
     }
     printf("sending KILL signal for all CP's...\n");
-    for (int j = 0; j < NCP; j++)
+    for (int j = 0; j < NCP1; j++)
     {
         sem_wait(&shared[0].empty);
         /* If another thread uses the buffer, wait */

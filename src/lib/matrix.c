@@ -29,3 +29,40 @@ void initMatrix(double matrix[DIMENSION][DIMENSION])
         }
     }
 }
+void copyMatrix(double source[DIMENSION][DIMENSION], double destination[DIMENSION][DIMENSION]){
+    for (int i = 0; i < DIMENSION; i++)
+    {
+        for (int j = 0; j < DIMENSION; j++)
+        {
+            destination[i][j] = source[i][j];
+        }
+    }
+}
+void printMatrix(double matrix[DIMENSION][DIMENSION]){
+    for (int i = 0; i < DIMENSION; i++)
+    {
+        for (int j = 0; j < DIMENSION; j++)
+        {
+            printf("%lf ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void sumColumns(double matrix[DIMENSION][DIMENSION], double vector[DIMENSION]){
+    for (int j = 0; j < DIMENSION; j++)
+    {
+        vector[j] = 0.0;
+        for (int i = 0; i < DIMENSION; i++)
+        {
+            vector[j] += matrix[i][j];
+        }
+    }
+}
+void sumV(double V[DIMENSION], double E){
+    E = 0.0;
+    for (int i = 0; i < DIMENSION; i++)
+    {
+        E += V[i];
+    }
+}

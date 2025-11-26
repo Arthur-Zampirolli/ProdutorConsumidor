@@ -7,7 +7,11 @@
 #endif
 
 
-
+/*
+C - Thread consumidora - Escreve um arquivo (saida.out) contendo Nome, A, B, C,
+V e E para cada um dos arquivos de entrada, obedecendo o seguinte formato (substituir
+<variável> pelo valor da variável). Teremos 1 instância desta thread: 
+*/
 void *Consumer(void *arg)
 {
     int i, index;
@@ -17,19 +21,18 @@ void *Consumer(void *arg)
     for (i = 0; i < NITERS; i++)
     {
 
-        /* Prepare to read item from buf */
-
-        /* If there are no filled slots, wait */
         sem_wait(&shared[1].full);
-        /* If another thread uses the buffer, wait */
         sem_wait(&shared[1].mutex);
-        item = shared[1].buf[shared[1].out];
-        shared[1].out = (shared[1].out + 1) % BUFF_SIZE;
-        printf("[C_%d] Consuming %s %s...\n", index, item.fileA, item.fileB);
-        fflush(stdout);
-        /* Release the buffer */
+
+          item = shared[1].buf[shared[1].out];
+          char fileName[100];
+          sprintf(fileName, "saida%d.out", index);
+          saveData(&item, fileName);
+          shared[1].out = (shared[1].out + 1) % BUFF_SIZE;
+          printf("[C_%d] Consuming %s %s...\n", index, item.fileA, item.fileB);
+          fflush(stdout);
+
         sem_post(&shared[1].mutex);
-        /* Increment the number of empty slots */
         sem_post(&shared[1].empty);
     }
     return NULL;

@@ -8,9 +8,6 @@
 #include <string.h>
 typedef struct data
 {
-    int buf[BUFF_SIZE]; /* shared var */
-    int in;             /* buf[in%BUFF_SIZE] is the first empty slot */
-    int out;            /* buf[out%BUFF_SIZE] is the first full slot */
     //propriedades que o professor pediu
     char fileA[NAME_MAX];
     char fileB[NAME_MAX];

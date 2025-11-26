@@ -75,3 +75,49 @@ int saveMatrix(char *filename, double A[DIMENSION][DIMENSION]){
     fclose(fp);
     return 0;
 }
+
+void saveData(Data* data, const char* outputFile){
+    FILE* fp = fopen(outputFile, "a");
+    if (!fp) {
+        perror("Unable to open output file");
+        return;
+    }
+
+    fprintf(fp, "File A: %s\n", data->fileA);
+    fprintf(fp, "File B: %s\n", data->fileB);
+
+    fprintf(fp, "Matrix A:\n");
+    for (int i = 0; i < DIMENSION; i++) {
+        for (int j = 0; j < DIMENSION; j++) {
+            fprintf(fp, "%lf ", data->A[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+
+    fprintf(fp, "Matrix B:\n");
+    for (int i = 0; i < DIMENSION; i++) {
+        for (int j = 0; j < DIMENSION; j++) {
+            fprintf(fp, "%lf ", data->B[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+
+    fprintf(fp, "Matrix C:\n");
+    for (int i = 0; i < DIMENSION; i++) {
+        for (int j = 0; j < DIMENSION; j++) {
+            fprintf(fp, "%lf ", data->C[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+
+    fprintf(fp, "Vector V:\n");
+    for (int i = 0; i < DIMENSION; i++) {
+        fprintf(fp, "%lf ", data->V[i]);
+    }
+    fprintf(fp, "\n");
+
+    fprintf(fp, "Scalar E: %lf\n", data->E);
+    fprintf(fp, "----------------------------------------\n");
+
+    fclose(fp);
+}
