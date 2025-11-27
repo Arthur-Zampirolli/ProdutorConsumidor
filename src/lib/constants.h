@@ -14,6 +14,8 @@
 #define DIMENSION 10 //dimensao da matrix
 #define NAME_MAX 100 // tamanho maximo do nome do arquivo
 
+#define INPUT_FILE "./input/entrada.in"
+
 #define TRUE 1
 #define FALSE 0
 
