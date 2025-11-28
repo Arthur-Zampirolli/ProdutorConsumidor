@@ -30,7 +30,7 @@ typedef struct
     int kill;
 } S;
 
-extern S shared[5];
+extern S shared[SHARED_COUNT];
 
 Data *initializeData();
 void showData(Data *data);

@@ -1,5 +1,5 @@
 #include "consumer_producer.h"
-#include "matrix.h"
+#include "../matrix.h"
 #ifndef BUFFER_INCLUDED
 #define BUFFER_INCLUDED
   #include "../data.h"
@@ -13,7 +13,7 @@
 
 void *createCPPointer(Data *item){
     Data *ptr = (Data *)malloc(sizeof(Data));
-
+    printf("Allocating memory for CP Pointer...\n");
     if (ptr == NULL)
     {
         fprintf(stderr, "Error allocating memory: %s\n", strerror(errno));
@@ -38,10 +38,10 @@ void *ConsumerProducer1(void *arg)
     int i, index;
     Data item;
     index = *((int *)arg);
-
+    printf("Starting CP1 thread %d...\n", index);
     for (i = 0; i < NITERS; i++)
     {
-
+        printf("CP1_%d waiting to consume...\n", index);
         /*BEGIN CRITICAL REGION*/
         sem_wait(&shared[0].full);
         sem_wait(&shared[0].mutex);
@@ -83,7 +83,7 @@ void *ConsumerProducer2(void *arg)
     int i, index;
     Data item;
     index = *((int *)arg);
-
+    printf("Starting CP2 thread %d...\n", index);
     for (i = 0; i < NITERS; i++)
     {
 

@@ -26,10 +26,11 @@ void *Consumer(void *arg)
 
           item = shared[1].buf[shared[1].out];
           char fileName[100];
-          sprintf(fileName, "saida%d.out", index);
+          sprintf(fileName, "%ssaida%d.out", OUTPUT_PATH, i);
           saveData(&item, fileName);
           shared[1].out = (shared[1].out + 1) % BUFF_SIZE;
           printf("[C_%d] Consuming %s %s...\n", index, item.fileA, item.fileB);
+          printf("[C_%d] Data saved to %s\n", index, fileName);
           fflush(stdout);
 
         sem_post(&shared[1].mutex);

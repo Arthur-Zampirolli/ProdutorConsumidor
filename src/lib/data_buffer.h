@@ -4,6 +4,6 @@
 #include "semaphore.h"
 #include "data.h"
 
-extern S shared[5]; //5 posiçoes como pedido
+extern S shared[SHARED_COUNT];
 
 #endif

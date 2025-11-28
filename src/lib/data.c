@@ -8,8 +8,6 @@ Data *initializeData(){
         perror("Failed to allocate memory for Data\n");
         exit(EXIT_FAILURE);
     }
-    data->in = 0;
-    data->out = 0;
     data->kill = 0;
     data->E = 0.0;
     memset(data->fileA, 0, NAME_MAX);
