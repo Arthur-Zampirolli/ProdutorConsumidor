@@ -3,9 +3,9 @@
 
 #define BUFF_SIZE 5 /* total number of slots */
 #define NP 1       /* total number of producers */
-#define NCP1 1      /* total number of consumers/producers */
-#define NCP2 1      /* total number of consumers/producers */
-#define NCP3 1      /* total number of consumers/producers */
+#define NCP1 5     /* total number of consumers/producers 1*/
+#define NCP2 4      /* total number of consumers/producers 2*/
+#define NCP3 3      /* total number of consumers/producers 3*/
 #define NC 1        /* total number of consumers */
 #define NITERS 50    /* number of items produced/consumed */
 #define KILL -1
@@ -16,7 +16,7 @@
 
 #define INPUT_FILE "./input/entrada.in"
 #define OUTPUT_PATH "./output/"
-#define SHARED_COUNT 4
+#define SHARED_COUNT 5
 #define TRUE 1
 #define FALSE 0
 

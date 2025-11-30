@@ -5,7 +5,7 @@
   #include "../data.h"
 #endif
 
-
+int fileLines = 0;
 
 //is going to read the file and alocates the matrices in shared memory
 Data *loadFromFile(char* filename){
@@ -15,6 +15,8 @@ Data *loadFromFile(char* filename){
     strcpy(data->fileA, filename);
     strcpy(data->fileB, filename);
     data->E = 0.0;
+    data->consumed = 0;
+    memset(data->V, 0, sizeof(double)*DIMENSION);
     initMatrix(data->C);
     return data;
 }
@@ -78,7 +80,6 @@ char **getFileNames(char *inputFile, int *numFiles) {
     char **fileNames = malloc(sizeof(char *) * 100); // assuming max 100 files
     char buffer[STRING_MAX+6];
     *numFiles = 0;
-
     while (fgets(buffer, STRING_MAX, fp) != NULL) {
         int size = strlen(buffer);
         printf("Found file: %s\n", buffer);
@@ -96,16 +97,38 @@ char **getFileNames(char *inputFile, int *numFiles) {
     return fileNames;
 }
 
+void kill_threads_NCP1() {
+  for (int i = 0; i < NCP1; i++) {
+    Data *kill_item = (Data *) malloc(sizeof(Data));
+    kill_item->kill = KILL;
+
+    /* Prepare to write item to buf */
+    /* If there are no empty slots, wait */
+    sem_wait(&shared[0].empty);
+    /* If another thread uses the buffer, wait */
+    sem_wait(&shared[0].mutex);
+
+    shared[0].buf[shared[0].in] = *kill_item;
+    shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
+
+    /* Increment the number of full slots */
+    sem_post(&shared[0].full);
+    /* Release the buffer */
+    sem_post(&shared[0].mutex);
+    free(kill_item);
+  }
+}
+
 void *Producer(void *arg)
 {
     printf("Starting Producer thread...\n");
     int i, index;
     Data item;
     index = *((int *)arg);
-    int numFiles = 0;
-    char **fileNames = getFileNames(INPUT_FILE, &numFiles);
-    printf("Producer %d found %d files to process.\n", index, numFiles);
-    for (i = 0; i < NITERS; i++)
+    
+    char **fileNames = getFileNames(INPUT_FILE, &fileLines);
+    printf("Producer %d found %d files to process.\n", index, fileLines);
+    for (i = 0; i < fileLines; i++)
     {
 
         sem_wait(&shared[0].empty);
@@ -114,28 +137,16 @@ void *Producer(void *arg)
             Data *data = loadFromFile(fileNames[i]);
             item = *data;
             shared[0].buf[shared[0].in] = item;
+            shared[0].buf[shared[0].in].consumed = 0;
             shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
             printf("[P_%d] Producing %s %s...\n", index, item.fileA, item.fileB);
             fflush(stdout);
-        
-        sem_post(&shared[0].mutex);
-        sem_post(&shared[0].full);
-        
-    }
-    printf("sending KILL signal for all CP's...\n");
-    for (int j = 0; j < NCP1; j++)
-    {
-        sem_wait(&shared[0].empty);
-        sem_wait(&shared[0].mutex);
-
-            printf("Sending kill signal for CP%d\n", j);
-            shared[0].buf[shared[0].in].kill = KILL;
-            shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
 
         sem_post(&shared[0].mutex);
         sem_post(&shared[0].full);
+        free(data);
     }
-
+    kill_threads_NCP1();
     printf("Fim produtor\n");
     return NULL;
 }

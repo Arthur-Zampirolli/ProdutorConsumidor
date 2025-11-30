@@ -12,6 +12,6 @@ void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSI
 void initMatrix(double matrix[DIMENSION][DIMENSION]);
 void copyMatrix(double source[DIMENSION][DIMENSION], double destination[DIMENSION][DIMENSION]);
 void printMatrix(double matrix[DIMENSION][DIMENSION]);
-void sumColumns(double matrix[DIMENSION][DIMENSION], double vector[DIMENSION]);
-void sumV(double V[DIMENSION], double E);
+void *sumColumns(double matrix[DIMENSION][DIMENSION], double *vector);
+void sumV(double V[DIMENSION], double *E);
 #endif

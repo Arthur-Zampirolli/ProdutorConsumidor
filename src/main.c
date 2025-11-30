@@ -13,7 +13,23 @@
 
 S shared[SHARED_COUNT];
 
+void initializeSharedBuffers(){
+    for (int index = 0; index < SHARED_COUNT; index++)
+    {
+        printf("Initializing semaphores for shared[%d]...\n", index);
+        sem_init(&shared[index].full, 0, 0);
+        sem_init(&shared[index].empty, 0, BUFF_SIZE);
+        sem_init(&shared[index].mutex, 0, 1);
+
+        // Inicializa in/out
+        shared[index].in = 0;
+        shared[index].out = 0;
+    }
+}
+
+
 int main(){
+    initializeSharedBuffers();
     pthread_t idP[NP], idC[NC], idCP1[NCP1], idCP2[NCP2], idCP3[NCP3];
     int index;
     int sP[NP], sC[NC], sCP1[NCP1], sCP2[NCP2], sCP3[NCP3];
@@ -102,7 +118,7 @@ int main(){
         pthread_join(idC[index], NULL);
     }
 
-    for (index = 0; index < 2; index++)
+    for (index = 0; index < SHARED_COUNT; index++)
     {
         sem_destroy(&shared[index].full);
         sem_destroy(&shared[index].empty);
@@ -112,50 +128,3 @@ int main(){
     printf("Programa encerrado com sucesso.\n");
     return 0;
 }
-
-// int main()
-// {
-//     // int size = 50;
-//     double A[DIMENSION][DIMENSION];
-//     double B[DIMENSION][DIMENSION];
-//     double C[DIMENSION][DIMENSION];
-//     char fileInput[STRING_MAX + 6]; // gambiarra do bem
-
-//     FILE *fp = fopen("./input/entrada.in", "r");
-//     if (!fp)
-//     {
-//         perror("File error:\n");
-//         return 1;
-//     }
-//     char buffer[STRING_MAX];
-//     while (fgets(buffer, STRING_MAX, fp) != NULL)
-//     {
-//         int size = strlen(buffer);
-//         buffer[size - 1] = '\0';
-//         if (size <= 1)
-//         {
-//             // EOF
-//             continue;
-//         }
-//         if (size > 1)
-//         {
-
-//             sprintf(fileInput, "%s", buffer);
-
-//             // fileInput[size - 1] = '\0'
-
-//             printf("Loading file: %s\n", fileInput);
-//             loadMatrices(fileInput, A, B);
-//             matrixMultiply(A, B, C);
-//             printf("----------MATRIX_A------------\n");
-//             printmatrix(A);
-//             printf("----------MATRIX_B------------\n");
-//             printmatrix(B);
-//             printf("-----------RESULT-------------\n");
-//             printmatrix(C);
-//         }
-//     }
-//     saveMatrix("./output/result.out", C);
-//     fclose(fp);
-//     return 0;
-// }

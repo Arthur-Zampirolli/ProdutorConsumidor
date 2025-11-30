@@ -17,6 +17,7 @@ typedef struct data
     double V[10];
     double E;
     int kill;
+    int consumed;
 } Data;
 
 typedef struct
@@ -28,9 +29,11 @@ typedef struct
     sem_t empty;        /* keep track of the number of empty spots */
     sem_t mutex;        /* enforce mutual exclusion to shared data */
     int kill;
-} S;
+    int consumed;
+}S;
 
 extern S shared[SHARED_COUNT];
+extern int fileLines;
 
 Data *initializeData();
 void showData(Data *data);

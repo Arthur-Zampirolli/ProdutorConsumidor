@@ -49,7 +49,8 @@ void printMatrix(double matrix[DIMENSION][DIMENSION]){
     }
 }
 
-void sumColumns(double matrix[DIMENSION][DIMENSION], double vector[DIMENSION]){
+void *sumColumns(double matrix[DIMENSION][DIMENSION], double *vector){
+    
     for (int j = 0; j < DIMENSION; j++)
     {
         vector[j] = 0.0;
@@ -58,11 +59,18 @@ void sumColumns(double matrix[DIMENSION][DIMENSION], double vector[DIMENSION]){
             vector[j] += matrix[i][j];
         }
     }
+    // printf("Sum of columns V: ");
+    // for(int i = 0; i < DIMENSION; i++){
+    //     printf("V[%d]=%lf ",i,vector[i]);
+    // }
+    // printf("\n");
+    return vector;
 }
-void sumV(double V[DIMENSION], double E){
-    E = 0.0;
+void sumV(double V[DIMENSION], double *E){
+    int r = 0.0;
     for (int i = 0; i < DIMENSION; i++)
     {
-        E += V[i];
+        r += V[i];
     }
+    *E = r;
 }

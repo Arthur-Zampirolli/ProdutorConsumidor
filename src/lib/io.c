@@ -77,7 +77,11 @@ int saveMatrix(char *filename, double A[DIMENSION][DIMENSION]){
 }
 
 void saveData(Data* data, const char* outputFile){
-    FILE* fp = fopen(outputFile, "a");
+    FILE* fp = fopen(outputFile, "w");
+    // for(int i = 0; i < DIMENSION; i++){
+    //     printf("V[%d]=%lf ",i,data->V[i]);
+    // }
+    printf("E%lf...\n",data->E);
     if (!fp) {
         perror("Unable to open output file");
         return;
@@ -85,7 +89,7 @@ void saveData(Data* data, const char* outputFile){
 
     fprintf(fp, "File A: %s\n", data->fileA);
     fprintf(fp, "File B: %s\n", data->fileB);
-
+    printf("saving data from %s\n", data->fileA);
     fprintf(fp, "Matrix A:\n");
     for (int i = 0; i < DIMENSION; i++) {
         for (int j = 0; j < DIMENSION; j++) {

@@ -20,21 +20,28 @@ void *Consumer(void *arg)
 
     for (i = 0; i < NITERS; i++)
     {
+        //int consumed = 0;
+        sem_wait(&shared[3].full);
+        sem_wait(&shared[3].mutex);
 
-        sem_wait(&shared[1].full);
-        sem_wait(&shared[1].mutex);
+          item = shared[3].buf[shared[3].out];
+          //consumed = shared[1].buf[shared[1].out].consumed;
 
-          item = shared[1].buf[shared[1].out];
           char fileName[100];
+          if (item.kill == KILL) {
+            printf("[C_%d] received KILL signal\n", index); fflush(stdout);
+            break;
+          }
+
           sprintf(fileName, "%ssaida%d.out", OUTPUT_PATH, i);
           saveData(&item, fileName);
-          shared[1].out = (shared[1].out + 1) % BUFF_SIZE;
+          shared[3].out = (shared[3].out + 1) % BUFF_SIZE;
           printf("[C_%d] Consuming %s %s...\n", index, item.fileA, item.fileB);
           printf("[C_%d] Data saved to %s\n", index, fileName);
           fflush(stdout);
 
-        sem_post(&shared[1].mutex);
-        sem_post(&shared[1].empty);
+        sem_post(&shared[3].mutex);
+        sem_post(&shared[3].empty);
     }
     return NULL;
 }
