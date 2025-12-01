@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <pthread.h>
 typedef struct data
 {
     //propriedades que o professor pediu
@@ -34,6 +35,12 @@ typedef struct
 
 extern S shared[SHARED_COUNT];
 extern int fileLines;
+extern int kill_propagated_NCP2;
+extern pthread_mutex_t kill_mutex_NCP2;
+extern int kill_propagated_NCP3;
+extern pthread_mutex_t kill_mutex_NCP3;
+extern int kill_propagated_NC;
+extern pthread_mutex_t kill_mutex_NC;
 
 Data *initializeData();
 void showData(Data *data);

@@ -98,27 +98,22 @@ char **getFileNames(char *inputFile, int *numFiles) {
 }
 
 void kill_threads_NCP1() {
-  for (int i = 0; i < NCP1; i++) {
+  for (int i = 0; i < NCP1*2; i++) {
     Data *kill_item = (Data *) malloc(sizeof(Data));
     kill_item->kill = KILL;
 
-    /* Prepare to write item to buf */
-    /* If there are no empty slots, wait */
     sem_wait(&shared[0].empty);
-    /* If another thread uses the buffer, wait */
     sem_wait(&shared[0].mutex);
 
-    shared[0].buf[shared[0].in] = *kill_item;
-    shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
+        shared[0].buf[shared[0].in] = *kill_item;
+        shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
 
-    /* Increment the number of full slots */
     sem_post(&shared[0].full);
-    /* Release the buffer */
     sem_post(&shared[0].mutex);
+    
     free(kill_item);
   }
 }
-
 void *Producer(void *arg)
 {
     printf("Starting Producer thread...\n");
@@ -136,8 +131,8 @@ void *Producer(void *arg)
 
             Data *data = loadFromFile(fileNames[i]);
             item = *data;
-            shared[0].buf[shared[0].in] = item;
-            shared[0].buf[shared[0].in].consumed = 0;
+            shared[0].buf[shared[0].in] = *data;
+            //shared[0].buf[shared[0].in].consumed = 0;
             shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
             printf("[P_%d] Producing %s %s...\n", index, item.fileA, item.fileB);
             fflush(stdout);

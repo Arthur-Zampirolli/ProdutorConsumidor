@@ -81,7 +81,7 @@ void saveData(Data* data, const char* outputFile){
     // for(int i = 0; i < DIMENSION; i++){
     //     printf("V[%d]=%lf ",i,data->V[i]);
     // }
-    printf("E%lf...\n",data->E);
+    //printf("E%lf...\n",data->E);
     if (!fp) {
         perror("Unable to open output file");
         return;

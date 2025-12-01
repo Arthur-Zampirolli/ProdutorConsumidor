@@ -12,6 +12,18 @@
 #include "lib/constants.h"
 
 S shared[SHARED_COUNT];
+// Variáveis Globais (Definidas no cabeçalho ou fora das funções)
+int kill_propagated_NCP2 = 0;
+pthread_mutex_t kill_mutex_NCP2; 
+
+int kill_propagated_NCP1 = 0;
+pthread_mutex_t kill_mutex_NCP1;
+
+int kill_propagated_NCP3 = 0;
+pthread_mutex_t kill_mutex_NCP3;
+
+int kill_propagated_NC = 0;
+pthread_mutex_t kill_mutex_NC;
 
 void initializeSharedBuffers(){
     for (int index = 0; index < SHARED_COUNT; index++)
@@ -34,17 +46,9 @@ int main(){
     int index;
     int sP[NP], sC[NC], sCP1[NCP1], sCP2[NCP2], sCP3[NCP3];
 
-    for (index = 0; index < SHARED_COUNT; index++)
-    {
-        printf("Initializing semaphores for shared[%d]...\n", index);
-        sem_init(&shared[index].full, 0, 0);
-        sem_init(&shared[index].empty, 0, BUFF_SIZE);
-        sem_init(&shared[index].mutex, 0, 1);
-
-        // Inicializa in/out
-        shared[index].in = 0;
-        shared[index].out = 0;
-    }
+    pthread_mutex_init(&kill_mutex_NCP2, NULL);
+    pthread_mutex_init(&kill_mutex_NCP3, NULL);
+    pthread_mutex_init(&kill_mutex_NC, NULL);
 
     for (index = 0; index < NP; index++)
     {
@@ -94,27 +98,32 @@ int main(){
     //JOIN THREADS
     for (index = 0; index < NP; index++)
     {
+        printf("Joining producer thread %d...\n", index);
         pthread_join(idP[index], NULL);
     }
-
-
-    for (index = 0; index < NCP1; index++)
+        for (index = 0; index < NCP2; index++)
     {
-        pthread_join(idCP1[index], NULL);
-    }
-    for (index = 0; index < NCP2; index++)
-    {
+        printf("Joining CP2 thread %d...\n", index);
         pthread_join(idCP2[index], NULL);
     }
     for (index = 0; index < NCP3; index++)
     {
+        printf("Joining CP3 thread %d...\n", index);
         pthread_join(idCP3[index], NULL);
     }
+
+    for (index = 0; index < NCP1; index++)
+    {
+        printf("Joining CP1 thread %d...\n", index);
+        pthread_join(idCP1[index], NULL);
+    }
+
 
 
 
     for (index = 0; index < NC; index++)
     {
+        printf("Joining consumer thread %d...\n", index);
         pthread_join(idC[index], NULL);
     }
 
@@ -125,6 +134,6 @@ int main(){
         sem_destroy(&shared[index].mutex);
     }
 
-    printf("Programa encerrado com sucesso.\n");
+    printf("Program completed sucessfully.\n");
     return 0;
 }
