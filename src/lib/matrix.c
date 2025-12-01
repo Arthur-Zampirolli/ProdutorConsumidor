@@ -2,7 +2,6 @@
 #include "matrix.h"
 #include <omp.h>
 
-// to paralelize with openMP, just add the pragma below the for
 
 void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSION], double c[DIMENSION][DIMENSION])
 {
@@ -15,10 +14,6 @@ void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSI
             for (int k = 0; k < DIMENSION; k++)
             {
                 c[i][j] += a[i][k] * b[k][j];
-                /*Exemplo: c[0][0] = a[0][0]*b[0][0]+
-                a[0][1]*b[1][0]+
-                a[0][2]*b[2][0];
-                */
             }
         }
     }
@@ -66,11 +61,7 @@ void *sumColumns(double matrix[DIMENSION][DIMENSION], double *vector){
             vector[j] += matrix[i][j];
         }
     }
-    // printf("Sum of columns V: ");
-    // for(int i = 0; i < DIMENSION; i++){
-    //     printf("V[%d]=%lf ",i,vector[i]);
-    // }
-    // printf("\n");
+
     return vector;
 }
 void sumV(double V[DIMENSION], double *E){

@@ -4,7 +4,6 @@
 #include </usr/include/semaphore.h>
 #include <string.h>
 #include "lib/constants.h"
-// #include "lib/semaphore.h"
 #include "lib/io.h"
 #include "lib/matrix.h"
 #include "lib/threads.h"
@@ -14,7 +13,6 @@
 int filesTotal = 0;
 
 S shared[SHARED_COUNT];
-// Variáveis Globais (Definidas no cabeçalho ou fora das funções)
 int kill_propagated_NCP2 = 0;
 pthread_mutex_t kill_mutex_NCP2; 
 

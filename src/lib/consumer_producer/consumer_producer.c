@@ -32,7 +32,7 @@ void *createCPPointer(Data *item){
     return (void *)ptr;
 }
 
-void kill_threads_NCP2() {
+void killThreadsCP2() {
   for (int i = 0; i < NCP2; i++) {
     Data *kill_item = (Data *) malloc(sizeof(Data));
     kill_item->kill = KILL;
@@ -51,7 +51,7 @@ void kill_threads_NCP2() {
   }
 }
 
-void kill_threads_NCP3() {
+void killThreadsCP3() {
   for (int i = 0; i < NCP3; i++) {
     Data *kill_item = (Data *) malloc(sizeof(Data));
     kill_item->kill = KILL;
@@ -108,58 +108,6 @@ void showItem(Data *item){
     printf("\nE: %lf\n", item->E);
 }
 
-// void *ConsumerProducer1(void *arg)
-// {
-//     int index;
-//     Data item;
-
-//     index = *((int *)arg);
-//     printf("Starting CP1 thread %d...\n", index);
-//     while(1)
-//     {
-//         printf("CP1_%d waiting to consume...\n", index);
-//         //int consumed = 0;
-//         /*BEGIN CRITICAL REGION*/
-//         sem_wait(&shared[0].full);
-//         sem_wait(&shared[0].mutex);
-
-//             item = shared[0].buf[shared[0].out];
-//             shared[0].out = (shared[0].out + 1) % BUFF_SIZE;
-//             fflush(stdout);
-
-//         sem_post(&shared[0].mutex);
-//         sem_post(&shared[0].empty);
-//         /*END CRITICAL REGION*/
-//         matrixMultiply(item.A, item.B, item.C);
-
-//         if (item.kill == KILL) {
-//            kill_threads_NCP2();
-//            printf("[CP1_%d] Received kill message\n", index); fflush(stdout);
-//            break;
-//         }
-//         // if(consumed){
-//         //     printf("[CP1_%d] Item %s already consumed, skipping...\n", index, item.fileA); fflush(stdout);
-//         //     free(ptr);
-//         //     continue;
-//         // }
-//         /*BEGIN CRITICAL REGION*/
-//         sem_wait(&shared[1].empty);
-//         sem_wait(&shared[1].mutex);
-
-//             shared[1].buf[shared[1].in] = item;
-//             shared[1].in = (shared[1].in + 1) % BUFF_SIZE;
-//             printf("[CP1_%d] Producing %s %s...\n", index, item.fileA, item.fileB);
-//             fflush(stdout);
-
-//         sem_post(&shared[1].mutex);
-//         sem_post(&shared[1].full);
-//         /*END CRITICAL REGION*/
-
-//         //free(ptr);
-//     }
-//     return NULL;
-// }
-
 void *ConsumerProducer1(void *arg)
 {
     int index;
@@ -189,7 +137,7 @@ void *ConsumerProducer1(void *arg)
            pthread_mutex_lock(&kill_mutex_NCP2);
            
            if (kill_propagated_NCP2 == 0) {
-               kill_threads_NCP2(); 
+               killThreadsCP2(); 
                kill_propagated_NCP2 = 1;
                printf("[CP1_LIDER] Propagando KILL para CP2.\n");
            }
@@ -252,7 +200,7 @@ void *ConsumerProducer2(void *arg)
            pthread_mutex_lock(&kill_mutex_NCP3);
            
            if (kill_propagated_NCP3 == 0) {
-               kill_threads_NCP3(); 
+               killThreadsCP3(); 
                kill_propagated_NCP3 = 1;
                printf("[CP1_LIDER] Propagando KILL para CP2.\n");
            }
@@ -342,51 +290,3 @@ void *ConsumerProducer3(void *arg)
     }
     return NULL;
 }
-
-// void *ConsumerProducer3(void *arg)
-// {
-//     int index;
-//     Data item;
-//     index = *((int *)arg);
-    
-//     while(1)
-//     {
-//         //BEGIN CRITICAL REGION
-//         //int consumed = 0;
-//         sem_wait(&shared[2].full);
-//         sem_wait(&shared[2].mutex);
-
-//             item = shared[2].buf[shared[2].out];
-//             //Data *ptr = (Data *)createCPPointer(&item);
-//             shared[2].out = (shared[2].out + 1) % BUFF_SIZE;
-//             //consumed = shared[2].buf[shared[2].out].consumed;
-//             shared[2].buf[shared[2].out].consumed = 1;
-//             printf("[CP3_%d] Consuming %s %s...\n", index, item.fileA, item.fileB);
-//             fflush(stdout);
-
-//         sem_post(&shared[2].mutex);
-//         sem_post(&shared[2].empty);
-//         //END CRITICAL REGION
-//         if (item.kill == KILL) {
-//             printf("[CP3_%d] Received kill message\n", index); fflush(stdout);
-//             kill_threads_NC();
-//             break;
-//         }
-
-//         sumV(item.V, &item.E);
-
-//         //BEGIN CRITICAL REGION
-//         sem_wait(&shared[3].empty);
-//         sem_wait(&shared[3].mutex);
-
-//             shared[3].buf[shared[3].in] = item;
-//             shared[3].in = (shared[3].in + 1) % BUFF_SIZE;
-//             printf("[CP3_%d] Producing %s %s...\n", index, item.fileA, item.fileB);
-//             fflush(stdout);
-
-//         sem_post(&shared[3].mutex);
-//         sem_post(&shared[3].full);
-//         //END CRITICAL REGION
-//     }
-//     return NULL;
-// }

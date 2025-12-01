@@ -21,54 +21,6 @@ Data *loadFromFile(char* filename){
     return data;
 }
 
-
-// int reader(){
-//     // {
-// //     // int size = 50;
-// //     double A[DIMENSION][DIMENSION];
-// //     double B[DIMENSION][DIMENSION];
-// //     double C[DIMENSION][DIMENSION];
-// //     char fileInput[STRING_MAX + 6]; // gambiarra do bem
-
-// //     FILE *fp = fopen("./input/entrada.in", "r");
-// //     if (!fp)
-// //     {
-// //         perror("File error:\n");
-// //         return 1;
-// //     }
-// //     char buffer[STRING_MAX];
-// //     while (fgets(buffer, STRING_MAX, fp) != NULL)
-// //     {
-// //         int size = strlen(buffer);
-// //         buffer[size - 1] = '\0';
-// //         if (size <= 1)
-// //         {
-// //             // EOF
-// //             continue;
-// //         }
-// //         if (size > 1)
-// //         {
-
-// //             sprintf(fileInput, "%s", buffer);
-
-// //             // fileInput[size - 1] = '\0'
-
-// //             printf("Loading file: %s\n", fileInput);
-// //             loadMatrices(fileInput, A, B);
-// //             matrixMultiply(A, B, C);
-// //             printf("----------MATRIX_A------------\n");
-// //             printmatrix(A);
-// //             printf("----------MATRIX_B------------\n");
-// //             printmatrix(B);
-// //             printf("-----------RESULT-------------\n");
-// //             printmatrix(C);
-// //         }
-// //     }
-// //     saveMatrix("./output/result.out", C);
-// //     fclose(fp);
-// //     return 0;
-// }
-
 int countFileLines(char *inputFile) {
     printf("Counting lines in file %s...\n", inputFile);
     FILE *fp = fopen(inputFile, "r");
@@ -99,7 +51,7 @@ char **getFileNames(char *inputFile, int *numFiles) {
         return NULL;
     }
 
-    char **fileNames = malloc(sizeof(char *) * countFileLines(inputFile));// assuming max 1 million files
+    char **fileNames = malloc(sizeof(char *) * countFileLines(inputFile));
     char buffer[STRING_MAX+6];
     *numFiles = 0;
     while (fgets(buffer, STRING_MAX, fp) != NULL) {
@@ -119,7 +71,7 @@ char **getFileNames(char *inputFile, int *numFiles) {
     return fileNames;
 }
 
-void kill_threads_NCP1() {
+void killThreadsCP1() {
   for (int i = 0; i < NCP1*2; i++) {
     Data *kill_item = (Data *) malloc(sizeof(Data));
     kill_item->kill = KILL;
@@ -154,7 +106,6 @@ void *Producer(void *arg)
             Data *data = loadFromFile(fileNames[i]);
             item = *data;
             shared[0].buf[shared[0].in] = *data;
-            //shared[0].buf[shared[0].in].consumed = 0;
             shared[0].in = (shared[0].in + 1) % BUFF_SIZE;
             printf("[P_%d] Producing %s %s...\n", index, item.fileA, item.fileB);
             fflush(stdout);
@@ -163,7 +114,7 @@ void *Producer(void *arg)
         sem_post(&shared[0].full);
         free(data);
     }
-    kill_threads_NCP1();
+    killThreadsCP1();
     printf("Fim produtor\n");
     return NULL;
 }

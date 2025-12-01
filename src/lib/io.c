@@ -121,7 +121,6 @@ void saveData(Data* data, const char* outputFile){
     fprintf(fp, "\n");
 
     fprintf(fp, "Scalar E: %lf\n", data->E);
-    fprintf(fp, "----------------------------------------\n");
 
     fclose(fp);
 }
