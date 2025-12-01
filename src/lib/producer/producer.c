@@ -77,7 +77,7 @@ char **getFileNames(char *inputFile, int *numFiles) {
         return NULL;
     }
 
-    char **fileNames = malloc(sizeof(char *) * 100); // assuming max 100 files
+    char **fileNames = malloc(sizeof(char *) * 100);// assuming max 100 files
     char buffer[STRING_MAX+6];
     *numFiles = 0;
     while (fgets(buffer, STRING_MAX, fp) != NULL) {
@@ -89,7 +89,7 @@ char **getFileNames(char *inputFile, int *numFiles) {
         buffer[size - 1] = '\0'; // remove newline character
         fileNames[*numFiles] = malloc(strlen(buffer) + 1);
         strcpy(fileNames[*numFiles], buffer);
-        
+        filesTotal++;
         (*numFiles)++;
     }
 
@@ -124,8 +124,8 @@ void *Producer(void *arg)
     char **fileNames = getFileNames(INPUT_FILE, &fileLines);
     printf("Producer %d found %d files to process.\n", index, fileLines);
     for (i = 0; i < fileLines; i++)
-    {
-
+    {   
+        printSharedBuffer(&shared[0]);
         sem_wait(&shared[0].empty);
         sem_wait(&shared[0].mutex);
 

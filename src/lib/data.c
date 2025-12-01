@@ -50,3 +50,12 @@ void showData(Data *data){
     }
     printf("\nE: %lf\n", data->E);
 }
+
+void printSharedBuffer(S *sharedBuffer) {
+    printf("Shared Buffer State:\n");
+    printf("In: %d\n", sharedBuffer->in);
+    printf("Out: %d\n", sharedBuffer->out);
+    // Note: Semaphores' internal state is not directly accessible
+    // You would typically not print semaphore values directly
+    // as they are managed by the OS/kernel.
+}

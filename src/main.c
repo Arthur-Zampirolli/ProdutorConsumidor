@@ -11,6 +11,8 @@
 #include "lib/data_buffer.h"
 #include "lib/constants.h"
 
+int filesTotal = 0;
+
 S shared[SHARED_COUNT];
 // Variáveis Globais (Definidas no cabeçalho ou fora das funções)
 int kill_propagated_NCP2 = 0;

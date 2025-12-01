@@ -171,7 +171,7 @@ void *ConsumerProducer1(void *arg)
     while(1)
     {
         printf("[CP1_%d] Waiting to consume...\n", index);
-        
+        printSharedBuffer(&shared[1]);
         /* BEGIN CRITICAL REGION (Consumo do Buffer 0) */
         sem_wait(&shared[0].full);  // Espera por item
         sem_wait(&shared[0].mutex); // Espera por acesso exclusivo
@@ -234,6 +234,7 @@ void *ConsumerProducer2(void *arg)
     {
         //int consumed = 0;
         // BEGIN CRITICAL REGION
+        printSharedBuffer(&shared[2]);
         sem_wait(&shared[1].full);
         sem_wait(&shared[1].mutex);
 
@@ -295,6 +296,7 @@ void *ConsumerProducer3(void *arg)
     while(1)
     {
         //BEGIN CRITICAL REGION
+        printSharedBuffer(&shared[3]);
         sem_wait(&shared[2].full);
         sem_wait(&shared[2].mutex);
 

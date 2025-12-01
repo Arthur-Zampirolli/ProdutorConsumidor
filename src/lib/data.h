@@ -45,4 +45,6 @@ extern pthread_mutex_t kill_mutex_NC;
 Data *initializeData();
 void showData(Data *data);
 
+void printSharedBuffer(S *sharedBuffer);
+
 #endif

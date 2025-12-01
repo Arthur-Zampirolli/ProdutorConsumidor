@@ -12,15 +12,20 @@ C - Thread consumidora - Escreve um arquivo (saida.out) contendo Nome, A, B, C,
 V e E para cada um dos arquivos de entrada, obedecendo o seguinte formato (substituir
 <variável> pelo valor da variável). Teremos 1 instância desta thread: 
 */
+
+
+
+
 void *Consumer(void *arg)
 {
     int i, index;
     Data item;
     index = *((int *)arg);
 
-    for (i = 0; i < NITERS; i++)
+    for (i = 0; i < filesTotal; i++)
     {
         //int consumed = 0;
+        printSharedBuffer(&shared[3]);
         sem_wait(&shared[3].full);
         sem_wait(&shared[3].mutex);
 
@@ -30,7 +35,7 @@ void *Consumer(void *arg)
           char fileName[100];
           if (item.kill == KILL) {
             printf("[C_%d] received KILL signal\n", index); fflush(stdout);
-            break;
+            return NULL;
           }
 
           sprintf(fileName, "%ssaida%d.out", OUTPUT_PATH, i);

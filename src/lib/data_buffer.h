@@ -5,5 +5,6 @@
 #include "data.h"
 
 extern S shared[SHARED_COUNT];
+extern int filesTotal;
 
 #endif
