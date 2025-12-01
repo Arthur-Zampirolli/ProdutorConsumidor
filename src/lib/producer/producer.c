@@ -69,7 +69,29 @@ Data *loadFromFile(char* filename){
 // //     return 0;
 // }
 
+int countFileLines(char *inputFile) {
+    printf("Counting lines in file %s...\n", inputFile);
+    FILE *fp = fopen(inputFile, "r");
+    if (!fp) {
+        perror("File error:\n");
+        return -1;
+    }
+
+    char buffer[STRING_MAX];
+    int lineCount = 0;
+    while (fgets(buffer, STRING_MAX, fp) != NULL) {
+        int size = strlen(buffer);
+        if (size > 1) { // skip empty lines
+            lineCount++;
+        }
+    }
+
+    fclose(fp);
+    return lineCount;
+}
+
 char **getFileNames(char *inputFile, int *numFiles) {
+
     printf("Reading file names from %s...\n", inputFile);
     FILE *fp = fopen(inputFile, "r");
     if (!fp) {
@@ -77,7 +99,7 @@ char **getFileNames(char *inputFile, int *numFiles) {
         return NULL;
     }
 
-    char **fileNames = malloc(sizeof(char *) * 100);// assuming max 100 files
+    char **fileNames = malloc(sizeof(char *) * countFileLines(inputFile));// assuming max 1 million files
     char buffer[STRING_MAX+6];
     *numFiles = 0;
     while (fgets(buffer, STRING_MAX, fp) != NULL) {
@@ -125,7 +147,7 @@ void *Producer(void *arg)
     printf("Producer %d found %d files to process.\n", index, fileLines);
     for (i = 0; i < fileLines; i++)
     {   
-        printSharedBuffer(&shared[0]);
+        printSharedBuffer(&shared[0], "[P]");
         sem_wait(&shared[0].empty);
         sem_wait(&shared[0].mutex);
 

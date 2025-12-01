@@ -17,7 +17,7 @@ if (CMAKE_C_COMPILER_ID MATCHES "GNU")
         -Werror        
     )
 endif()
-
+find_package(OpenMP REQUIRED)
 add_executable(
     main      
     src/main.c
@@ -30,3 +30,4 @@ add_executable(
     src/lib/data_buffer.c
     
 )
+target_link_libraries(main PRIVATE OpenMP::OpenMP_C)

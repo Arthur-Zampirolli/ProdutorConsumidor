@@ -25,7 +25,7 @@ void *Consumer(void *arg)
     for (i = 0; i < filesTotal; i++)
     {
         //int consumed = 0;
-        printSharedBuffer(&shared[3]);
+        printSharedBuffer(&shared[3], "[C]");
         sem_wait(&shared[3].full);
         sem_wait(&shared[3].mutex);
 

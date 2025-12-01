@@ -1,6 +1,6 @@
 import random
-TAMANHO = 50
-DIMENSION = 10
+TAMANHO = 100 # pode ser alterado
+DIMENSION = 10 # nao pode ser alterado para nao quebrar o codigo C
 
 separators = {
     "comma": ",",

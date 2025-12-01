@@ -51,8 +51,8 @@ void showData(Data *data){
     printf("\nE: %lf\n", data->E);
 }
 
-void printSharedBuffer(S *sharedBuffer) {
-    printf("Shared Buffer State:\n");
+void printSharedBuffer(S *sharedBuffer, char* caller) {
+    printf("%s called shared Buffer State:\n", caller);
     printf("In: %d\n", sharedBuffer->in);
     printf("Out: %d\n", sharedBuffer->out);
     // Note: Semaphores' internal state is not directly accessible

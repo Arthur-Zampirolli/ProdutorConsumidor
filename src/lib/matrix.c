@@ -1,7 +1,12 @@
 
 #include "matrix.h"
+#include <omp.h>
+
+// to paralelize with openMP, just add the pragma below the for
+
 void *matrixMultiply(double a[DIMENSION][DIMENSION], double b[DIMENSION][DIMENSION], double c[DIMENSION][DIMENSION])
 {
+    #pragma omp parallel for num_threads(NUM_THREADS)
     for (int i = 0; i < DIMENSION; i++)
     {
         for (int j = 0; j < DIMENSION; j++)
@@ -49,8 +54,10 @@ void printMatrix(double matrix[DIMENSION][DIMENSION]){
     }
 }
 
+
+
 void *sumColumns(double matrix[DIMENSION][DIMENSION], double *vector){
-    
+    #pragma omp parallel for num_threads(NUM_THREADS)
     for (int j = 0; j < DIMENSION; j++)
     {
         vector[j] = 0.0;

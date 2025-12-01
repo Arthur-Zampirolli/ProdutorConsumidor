@@ -14,6 +14,8 @@
 #define DIMENSION 10 //dimensao da matrix
 #define NAME_MAX 100 // tamanho maximo do nome do arquivo
 
+#define NUM_THREADS 2 // numero de threads para operacoes com openMP
+
 #define INPUT_FILE "./input/entrada.in"
 #define OUTPUT_PATH "./output/"
 #define SHARED_COUNT 4
