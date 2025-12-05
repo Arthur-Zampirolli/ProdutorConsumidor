@@ -75,7 +75,7 @@ void killThreadsCP1() {
   for (int i = 0; i < NCP1*2; i++) {
     Data *kill_item = (Data *) malloc(sizeof(Data));
     kill_item->kill = KILL;
-
+    //BEGIN CRITICAL REGION
     sem_wait(&shared[0].empty);
     sem_wait(&shared[0].mutex);
 
@@ -84,7 +84,7 @@ void killThreadsCP1() {
 
     sem_post(&shared[0].full);
     sem_post(&shared[0].mutex);
-    
+    //END CRITICAL REGION
     free(kill_item);
   }
 }
@@ -115,6 +115,6 @@ void *Producer(void *arg)
         free(data);
     }
     killThreadsCP1();
-    printf("Fim produtor\n");
+    printf("End producer\n");
     return NULL;
 }

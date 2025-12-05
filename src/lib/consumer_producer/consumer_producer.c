@@ -139,7 +139,7 @@ void *ConsumerProducer1(void *arg)
            if (kill_propagated_NCP2 == 0) {
                killThreadsCP2(); 
                kill_propagated_NCP2 = 1;
-               printf("[CP1_LIDER] Propagando KILL para CP2.\n");
+               printf("[CP1_LEADER] Sending KILL to CP2.\n");
            }
            
            pthread_mutex_unlock(&kill_mutex_NCP2);
@@ -202,7 +202,7 @@ void *ConsumerProducer2(void *arg)
            if (kill_propagated_NCP3 == 0) {
                killThreadsCP3(); 
                kill_propagated_NCP3 = 1;
-               printf("[CP1_LIDER] Propagando KILL para CP2.\n");
+               printf("[CP1_LEADER] Sending KILL to CP2.\n");
            }
            
            pthread_mutex_unlock(&kill_mutex_NCP3);
@@ -264,7 +264,7 @@ void *ConsumerProducer3(void *arg)
             if (kill_propagated_NC == 0) {
                kill_threads_NC(); // Chamada corrigida (NC * 1)
                kill_propagated_NC = 1;
-               printf("[CP3_LIDER] Propagando KILL para Consumidores.\n");
+               printf("[CP3_LEADER] Sending KILL to Consumers.\n");
             }
             
             pthread_mutex_unlock(&kill_mutex_NC);
